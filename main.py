@@ -57,7 +57,7 @@ def update_contracts():
     while True:
         time.sleep(60)
         for c in contracts:
-            c["profit"] += 10  # ⚡ محاكاة ارتفاع بنسبة 10%
+            c["profit"] += 10
             if c["profit"] >= 30 and not c.get("alert_sent"):
                 try:
                     bot.send_message(
@@ -69,24 +69,27 @@ def update_contracts():
                     print(f"⚠️ خطأ أثناء إرسال التنبيه: {e}")
         save_contracts(contracts)
 
-# تشغيل التحديث بخيط مستقل
-threading.Thread(target=update_contracts, daemon=True).start()
-
 # ===============================
-# 🌐 واجهة الويب لتأكيد التشغيل
+# 🌐 Flask للتأكيد
 # ===============================
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "✅ Majed Bot is running successfully!"
+    return "✅ Majed Bot is running successfully and stable!"
 
 # ===============================
-# 🚀 التشغيل الرئيسي
+# 🚀 التشغيل المنفصل
 # ===============================
+def start_bot():
+    print("🤖 Running Majed bot polling...")
+    bot.infinity_polling(timeout=60, long_polling_timeout=60)
+
 if __name__ == "__main__":
+    # تشغيل البوت في خيط منفصل
+    t1 = threading.Thread(target=start_bot)
+    t1.start()
+
+    # تشغيل Flask بشكل أساسي
     port = int(os.environ.get("PORT", 8080))
-    threading.Thread(target=lambda: bot.polling(none_stop=True, interval=1, timeout=20), daemon=True).start()
     app.run(host="0.0.0.0", port=port)
-    while True:
-        time.sleep(1000)  # 💤 يبقي البوت شغال دائمًا
