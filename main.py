@@ -88,3 +88,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     threading.Thread(target=lambda: bot.polling(none_stop=True, interval=1, timeout=20), daemon=True).start()
     app.run(host="0.0.0.0", port=port)
+
+    # 🔁 إبقاء البوت نشطًا دائمًا
+    while True:
+        time.sleep(1000)
